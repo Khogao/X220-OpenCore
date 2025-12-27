@@ -12,7 +12,7 @@
 				<key>Enabled</key>
 				<true/>
 				<key>Path</key>
-				<string>dsdt.aml</string>
+				<string>DSDT.aml</string>
 			</dict>
 			<dict>
 				<key>Comment</key>

@@ -1,28 +1,33 @@
-# Lenovo Thinkpad X220 OpenCore Adoption Guide
+# Lenovo Thinkpad X220 OpenCore Adoption Guide (Monterey Update)
 
 ![](./x220_High_Sierra.jpg)
 
-## Who is this repo for
+## Overview
 
-Those who want to install ONLY `macOS` on their machine. If you intend to install other OSes as well, head to the [X220-Opencore-Dualboot](https://github.com/w43322/X220-OpenCore-Dualboot) repo.
+This repo provides an OpenCore configuration for the Lenovo ThinkPad X220. It has been updated to support **macOS Monterey** using **OpenCore 1.0.6**.
 
-## TLDR
+**Important for Monterey:**
+The X220 uses Intel HD 3000 graphics, which are **not natively supported** in macOS Monterey. You **MUST** use [OpenCore Legacy Patcher (OCLP)](https://dortania.github.io/OpenCore-Legacy-Patcher/) after installation to enable graphics acceleration. Without it, the system will be extremely slow.
 
-#### Flashing BIOS
+## Updates (December 2025)
 
-1. Flash the modified BIOS under Windows. Instructions are provided in the zip file.
+*   **OpenCore**: Updated to **1.0.6**
+*   **Kexts**: Updated to latest versions (Lilu 1.7.1, WEG 1.7.0, AppleALC 1.9.6, etc.)
+*   **Target OS**: macOS Monterey (requires OCLP)
 
-#### Installing macOS
+## Installation Steps
 
-1. Make a Installation USB Drive per [Dortania's guide](https://dortania.github.io/OpenCore-Install-Guide/). Install `macOS High Sierra` on the X220.
-
-#### Optimizing macOS
-
-1. [Generate your own](https://dortania.github.io/OpenCore-Post-Install/universal/iservices.html) `Serial Number`, `MLB` and `UUID`, and populate `ROM` with the mac address of your Ethernet port.
-
-2. The `SSDT-PM.aml` is generated using an `X220i` with an `i3-2310M` processor. If you have a different processor, please [generate this file after install](https://dortania.github.io/OpenCore-Post-Install/universal/pm.html#sandy-and-ivy-bridge-power-management) and replace it.
-
-3. If your `X220` has a `USB3.0` port, please [map the port](https://dortania.github.io/OpenCore-Post-Install/usb/) or it might not run at `USB3.0` speed.
+1.  **Flash BIOS**: Ensure you are running the modified BIOS (included in `X220_v1.46_Modified_BIOS.zip`) to remove the whitelist.
+2.  **Create Installer**: Follow [Dortania's Guide](https://dortania.github.io/OpenCore-Install-Guide/) to create a macOS Monterey USB installer.
+3.  **Prepare EFI**:
+    *   Use the files in `Updates/OpenCore` as a base.
+    *   Add the Kexts from `Updates/Kexts`.
+    *   Add your `DSDT.aml` and `SSDT-PM.aml` to `ACPI`.
+    *   Configure `config.plist` using **ProperTree** (found in `Updates/Tools`).
+4.  **Install macOS**: Boot from USB and install Monterey.
+5.  **Post-Install**:
+    *   **Graphics**: Download and run **OpenCore Legacy Patcher**. Select "Post-Install Root Patch" to fix Intel HD 3000 graphics.
+    *   **Power Management**: Generate a new `SSDT-PM.aml` for your specific CPU using `ssdtPRGen.sh` if needed.
 
 ## Additional Information
 
@@ -53,18 +58,17 @@ I know this is not a good practice, but currently I can't spare the time and ene
 If the custom `SSDT`s are made, we can ditch `rEFInd` and use `OpenCore` to boot all OSes, which is a lot cleaner.
 If anyone is interested in doing this, you're welcomed to fork this repo or create PRs.
 
-5. This guide assumes you have swapped the WiFi card for a natively supported one (like the DW1510). No Bluetooth / Wifi kext is present in this repo. If you need it, please add it on your own.
+5. **Intel Wi-Fi**: This guide now supports the Intel Centrino Advanced-N 6300 via `AirportItlwm`. See `Updates/Guides/Intel_WiFi_Setup.md` for details.
 
-#### Binary Versions
+#### Binary Versions (Updated)
 
-| Binary               | Version / Source |
+| Binary               | Version |
 | -------------------- | ---------------- |
-| Modified 1.46 BIOS   | from [mcdonnelltech](https://x220.mcdonnelltech.com/) |
-| OpenCore             | 0.8.4            |
-| Lilu                 | 1.6.2            |
-| AppleALC             | 1.7.5            |
-| WhateverGreen        | 1.6.1            |
-| VirtualSMC & modules | 1.3.0            |
-| VoodooPS2Controller  | Modded from [mcdonnelltech](https://x220.mcdonnelltech.com/) |
-| DSDT.aml             | from [mcdonnelltech](https://x220.mcdonnelltech.com/) |
-| SSDT-PM.aml          | Generated using [ssdtPRGen](https://github.com/Piker-Alpha/ssdtPRGen.sh) on X220i / i3-2310M |
+| OpenCore             | 1.0.6            |
+| Lilu                 | 1.7.1            |
+| AppleALC             | 1.9.6            |
+| WhateverGreen        | 1.7.0            |
+| VirtualSMC           | 1.3.7            |
+| VoodooPS2Controller  | 2.3.7            |
+| IntelMausi           | 1.0.8            |
+| AirportItlwm         | 2.3.0 (Monterey) |
