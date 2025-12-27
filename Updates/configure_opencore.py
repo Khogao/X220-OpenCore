@@ -1,6 +1,7 @@
 import plistlib
 import os
 import sys
+import uuid
 
 # Paths
 ROOT = r"c:\Users\Phi\OneDrive\Documents\GitHub\X220-OpenCore\Updates\EFI_Monterey\EFI\OC"
@@ -232,7 +233,7 @@ def main():
     config["Misc"]["Security"]["ScanPolicy"] = 0
     config["Misc"]["Security"]["SecureBootModel"] = "Disabled" # Required for X220/Monterey
     config["Misc"]["Security"]["Vault"] = "Optional"
-    config["Misc"]["Security"]["ExposeSensitiveData"] = 6 # Bit 1 set (0x2) + others. 0x6 is standard.
+    config["Misc"]["Security"]["ExposeSensitiveData"] = 7 # 0x1 (Printable) + 0x2 (Log) + 0x4 (Audio). Bit 0x1 required for NVRAM.
 
     # Misc -> Debug
     config["Misc"]["Debug"]["AppleDebug"] = True
@@ -250,7 +251,15 @@ def main():
     
     # PlatformInfo -> Generic
     config["PlatformInfo"]["Generic"]["SystemProductName"] = "MacBookPro8,1" # X220 standard
-    # Note: Serial, MLB, UUID are left as default/empty. User must generate them.
+    
+    # Inject SMBIOS (Generated via macserial)
+    # Serial: W89HT0CCDH2G
+    # MLB: W89223701J9DM6DJA
+    # UUID: Generated randomly
+    print("Injecting SMBIOS...")
+    config["PlatformInfo"]["Generic"]["SystemSerialNumber"] = "W89HT0CCDH2G"
+    config["PlatformInfo"]["Generic"]["MLB"] = "W89223701J9DM6DJA"
+    config["PlatformInfo"]["Generic"]["SystemUUID"] = str(uuid.uuid4()).upper()
 
     # UEFI -> APFS
     config["UEFI"]["APFS"]["MinDate"] = -1
